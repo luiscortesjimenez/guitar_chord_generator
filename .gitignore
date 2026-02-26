@@ -1,0 +1,12 @@
+# Ignore the build directory
+build/
+.cache/
+
+# Ignore compiled executables
+a.out
+*.o
+*.exe
+
+# Ignore OS-specific junk
+.DS_Store
+Thumbs.db
