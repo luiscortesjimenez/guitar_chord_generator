@@ -1,17 +1,32 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 project(ChordArchitect VERSION 1.0)
 
-# Set the C++ standard to modern C++20 (great for recruiters to see!)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Tell CMake where to look for your header files
 include_directories(include)
 
-# Gather all the source files
+# --- Main executable ---
 file(GLOB SOURCES "src/*.cpp")
+add_executable(guitar_chord_generator ${SOURCES})
 
-# Create the executable
-add_executable(ChordArchitect ${SOURCES})
+# --- Engine library (shared between main and tests) ---
+add_library(chord_engine_lib
+    src/Fretboard.cpp
+    src/Chord.cpp
+    src/ChordHashTable.cpp
+)
+target_include_directories(chord_engine_lib PUBLIC include)
 
-# (Optional) If you use a testing framework later, you'd add it here
+# --- Catch2 test framework ---
+include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.5.2
+)
+FetchContent_MakeAvailable(Catch2)
+
+# --- Test executable ---
+add_executable(tests tests/main_tests.cpp)
+target_link_libraries(tests PRIVATE chord_engine_lib Catch2::Catch2WithMain)
